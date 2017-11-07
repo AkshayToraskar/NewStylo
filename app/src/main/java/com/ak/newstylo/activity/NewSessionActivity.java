@@ -61,12 +61,11 @@ import io.realm.RealmList;
 
 public class NewSessionActivity extends AppCompatActivity implements SaveCapturedData, PreviewData {
 
-    @BindView(R.id.etAge)
-    EditText etAge;
-    @BindView(R.id.etProblem)
-    EditText etProblems;
-    @BindView(R.id.etComment)
-    EditText etComments;
+    @BindView(R.id.etBillno)
+    EditText etBillno;
+
+    @BindView(R.id.etNote)
+    EditText etNote;
     @BindView(R.id.rvImageCollection)
     RecyclerView rvImageCollection;
     @BindView(R.id.llNoData)
@@ -78,8 +77,8 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
     Realm realm;
     Validate validate;
 
-    Long patientId, sessionId;
-    // Patients patients;
+    Long  sessionId;
+    Customer customer;
 
     public static long editImageId;
     private RealmList<ImageData> sessionImageList;
@@ -88,11 +87,12 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
     Session session;
     String dateText;
 
-    Customer patients;
+   // Customer patients;
 
     int sessionPos;
     //AwsOp awsopListener;
     //AwsOperations awsOperations;
+    long customerId;
 
     public static ArrayList<ImageData> imageData;
     SessionManager sessionManager;
@@ -122,9 +122,8 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("New Session");
 
-        etProblems.addTextChangedListener(textWatcher);
-        etComments.addTextChangedListener(textWatcher);
-        etAge.addTextChangedListener(textWatcher);
+        etNote.addTextChangedListener(textWatcher);
+        etBillno.addTextChangedListener(textWatcher);
 
         sessionImageList = new RealmList<>();
 
@@ -142,10 +141,10 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
 
 
         if (getIntent().getExtras() != null) {
-            patientId = getIntent().getExtras().getLong("patientId");
+            customerId = getIntent().getExtras().getLong("customerId");
             sessionId = getIntent().getExtras().getLong("sessionId");
             sessionPos = getIntent().getExtras().getInt("pos");
-            patients = realm.where(Customer.class).equalTo("id", patientId).findFirst();
+            customer = realm.where(Customer.class).equalTo("id", customerId).findFirst();
 
 
             if (sessionId != 0) {
@@ -155,34 +154,17 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                 // sessionImageList.clear();
                 // sessionImageList.addAll(realm.where(ImageData.class).equalTo("sessionId", sessionId).findAll());
                 // Collections.reverse(sessionImageList);
-                if (session.getAge() != 0) {
-                    etAge.setText(String.valueOf(session.getAge()));
+                if (session.getBillNo() != 0) {
+                    etBillno.setText(String.valueOf(session.getBillNo()));
                 }
-                if (session.getComments() != null) {
-                    etComments.setText(session.getComments() + " ");
+                if (session.getNote() != null) {
+                    etNote.setText(session.getNote() + " ");
                 }
-                if (session.getProblems() != null) {
-                    etProblems.setText(session.getProblems() + " ");
-                }
+
                 getSupportActionBar().setTitle(session.getDate());
 
 
-                /*try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
-                    Date start = sdf.parse(session.getDate());
-                    Date end = sdf.parse(dateText);
 
-                    if (start.before(end)) {
-                        fabCapture.setVisibility(View.GONE);
-
-                        etAge.setEnabled(false);
-                        etProblems.setEnabled(false);
-                    }
-
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }*/
 
 
             } else {
@@ -195,7 +177,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                         session = realm.createObject(Session.class, sessionId);
                         //session.setPatients(patients);
                         session.setDate(dateText);
-                        session.setPatientId(patientId);
+                        session.setCustomerId(customerId);
                         session.setUploaded(false);
                         //MainActivity.doctor.getPatients().get(PatientHistoryActivity.pos).getSessions().add(session);
                         realm.copyToRealmOrUpdate(session);
@@ -204,7 +186,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
 
             }
             mAdapter = new SessionImageAdapter(this, sessionImageList, previewData);
-            GridLayoutManager mLayoutManager = new GridLayoutManager(this, 2);
+            GridLayoutManager mLayoutManager = new GridLayoutManager(this, 3);
             rvImageCollection.setLayoutManager(mLayoutManager);
             rvImageCollection.setItemAnimator(new DefaultItemAnimator());
             rvImageCollection.setAdapter(mAdapter);
@@ -268,9 +250,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                 finish();
                 break;
 
-            /*case R.id.action_save_session:
-                saveData();
-                break;*/
+
 
             case R.id.action_delete_session:
 
@@ -296,28 +276,9 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                             }
                         })
                         .show();
-
-
                 break;
 
-            case R.id.action_generate_pdf:
-               /* try {
-                    generatePdf();
-                } catch (DocumentException e) {
-                    e.printStackTrace();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
-                break;
 
-           /* case R.id.action_share_session:
-
-                Intent i = new Intent(this, ShareActivity.class);
-                i.putExtra("sessionId", sessionId);
-                startActivity(i);
-                break;*/
 
         }
         return super.onOptionsItemSelected(item);
@@ -342,13 +303,6 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
 
                 if (null != extra) {
 
-                    //boolean changed = extra.getBoolean(Constants.EXTRA_OUT_BITMAP_CHANGED);
-                    // if (changed) {
-
-                    //  try {
-                    //final InputStream iStream = getContentResolver().openInputStream(path);
-                    //final byte[] inputData = getBytes(iStream);
-
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
@@ -356,7 +310,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                                     /*imgdata.setByteArrayImage(inputData);*/
 
                             imgdata.setSessionId(sessionId);
-                            imgdata.setOffline(true);
+
                             imgdata.setDate(String.valueOf(new Date()));
                             imgdata.setPath(filepath);
                             realm.copyToRealmOrUpdate(imgdata);
@@ -368,28 +322,6 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
 
                     previewData.updateData();
 
-                    //} catch (FileNotFoundException e) {
-                    //    e.printStackTrace();
-                    // } catch (IOException e) {
-                    //    e.printStackTrace();
-                    //}
-                    // }
-
-                   /* File fdelete = new File(data.getData().toString());
-                    if (fdelete.exists()) {
-                        if (fdelete.delete()) {
-                            System.out.println("file Deleted :" + path);
-                            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(new File(data.getData().toString()))));
-
-                        } else {
-                            System.out.println("file not Deleted :" + path);
-                        }
-                    }*/
-
-                    /*File photo = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "GYNAECAM" + File.separator + "PatientData" + ".png");
-                    if (photo.exists()) {
-                        photo.delete();
-                    }*/
                 }
 
 
@@ -404,17 +336,13 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
         OutputStream outputStream = null;
         File mediaFile = null;
         try {
-            // read this file into InputStream
-            // inputStream = new FileInputStream("/Users/mkyong/Downloads/holder.js");
 
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             mediaFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + ".Gynaecam" + File.separator +
                     "Edited_I" + timeStamp);
 
-            // write the inputStream to a FileOutputStream
             outputStream = new FileOutputStream(mediaFile);
 
-//            Bitmap bm = BitmapFactory.decodeStream(inputStream);
             Bitmap bm = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.fromFile(new File(uri)));
             outputStream = new FileOutputStream(mediaFile);
             BufferedOutputStream bos = new BufferedOutputStream(outputStream);
@@ -425,13 +353,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-           /* if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }*/
+
             if (outputStream != null) {
                 try {
                     // outputStream.flush();
@@ -462,9 +384,8 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
 
         switch (id) {
             case R.id.fabCapture:
-
-               // Intent cameraIntent = new Intent(this, CameraActivity.class);
-               // startActivity(cameraIntent);
+                Intent cameraIntent = new Intent(this, CameraActivity.class);
+                startActivity(cameraIntent);
                 break;
         }
     }
@@ -496,10 +417,10 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
 
                 ImageData imgdata = realm.createObject(ImageData.class, new Date().getTime());
                 //imgdata.setByteArrayImage(data);
-                imgdata.setOffline(true);
+                //imgdata.setOffline(true);
                 imgdata.setSessionId(sessionId);
                 imgdata.setPath(uri.getPath());
-                imgdata.setMediaType(1);
+                //imgdata.setMediaType(1);
                 imgdata.setDate(dateText);
                 imgdata.setFilename(filename);
                 sessionImageList.add(imgdata);
@@ -542,7 +463,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                 //      imgdata.setByteArrayImage(videoBytes);
                 //  }
                 imgdata.setSessionId(sessionId);
-                imgdata.setMediaType(2);
+                //imgdata.setMediaType(2);
                 imgdata.setPath(uri.getPath());
                 imgdata.setDate(dateText);
                 sessionImageList.add(imgdata);
@@ -567,19 +488,17 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
             @Override
             public void execute(Realm realm) {
 
-                String ageTxt = etAge.getText().toString().trim();
-                String problemTxt = etProblems.getText().toString().trim();
-                String commmentTxt = etComments.getText().toString().trim();
+                String billnoTxt = etBillno.getText().toString().trim();
+               // String problemTxt = etProblems.getText().toString().trim();
+                String noteTxt = etNote.getText().toString().trim();
 
-                if (!ageTxt.equals("")) {
-                    session.setAge(Integer.parseInt(ageTxt));
-                }
-                if (!problemTxt.equals("")) {
-                    session.setProblems(problemTxt);
+                if (!billnoTxt.equals("")) {
+                    session.setBillNo(Integer.parseInt(billnoTxt));
                 }
 
-                if (!commmentTxt.equals("")) {
-                    session.setComments(commmentTxt);
+
+                if (!noteTxt.equals("")) {
+                    session.setNote(noteTxt);
                 }
 
                 session.setByteArrayImageData(sessionImageList);

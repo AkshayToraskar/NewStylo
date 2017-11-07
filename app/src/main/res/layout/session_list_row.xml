@@ -25,42 +25,26 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvAge"
+                android:id="@+id/tvBillno"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Age" />
+                android:text="Billno" />
+
 
             <TextView
-                android:id="@+id/tvProblem"
+                android:id="@+id/tvNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Problems" />
+                android:text="Note" />
 
-            <TextView
-                android:id="@+id/tvComment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Comment" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="2">
 
                 <TextView
                     android:id="@+id/tvImgCount"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:text="Image" />
 
-                <TextView
-                    android:id="@+id/tvVideoCount"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Video" />
-            </LinearLayout>
+
 
         </LinearLayout>
 

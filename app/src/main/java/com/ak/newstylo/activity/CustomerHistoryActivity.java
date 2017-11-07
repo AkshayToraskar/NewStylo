@@ -47,7 +47,7 @@ public class CustomerHistoryActivity extends AppCompatActivity {
     public SessionHistoryAdapter mAdapter;
 
     Customer customer;
-    Long patientId;
+    Long customerId;
     Realm realm;
     public static int pos;
     SessionManager sessionManager;
@@ -60,7 +60,7 @@ public class CustomerHistoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_patient_history);
+        setContentView(R.layout.activity_customer_history);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         realm = Realm.getDefaultInstance();
@@ -73,7 +73,7 @@ public class CustomerHistoryActivity extends AppCompatActivity {
 
 
         if (getIntent().getExtras() != null) {
-            patientId = getIntent().getExtras().getLong("patientId");
+            customerId = getIntent().getExtras().getLong("customerId");
             pos = getIntent().getExtras().getInt("pos");
 
             //Doctor doctor = realm.where(Doctor.class).equalTo("username", sessionManager.getUsername()).findFirst();
@@ -81,11 +81,11 @@ public class CustomerHistoryActivity extends AppCompatActivity {
             //patients = MainActivity.doctor.getPatients().get(pos);
 
 
-            customer = realm.where(Customer.class).equalTo("id", patientId).findFirst();
+            customer = realm.where(Customer.class).equalTo("id", customerId).findFirst();
 
             if (customer != null) {
 
-                getSupportActionBar().setTitle(customer.getFirstname() + " " + customer.getLastname());
+                getSupportActionBar().setTitle(customer.getFullname());
 
 
                 tvMobile.setText(customer.getMobile());
@@ -94,7 +94,7 @@ public class CustomerHistoryActivity extends AppCompatActivity {
 
                 //List<Session> aa = patients.getSessions(); //realm.where(Session.class).equalTo("patients.id",patientId).findAll();
                 sessionList.clear();
-                sessionList.addAll(realm.where(Session.class).equalTo("patientId", patientId).findAll());
+                sessionList.addAll(realm.where(Session.class).equalTo("customerId", customerId).findAll());
                 Collections.reverse(sessionList);
 
                 mAdapter = new SessionHistoryAdapter(this, sessionList);
@@ -117,7 +117,7 @@ public class CustomerHistoryActivity extends AppCompatActivity {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
                 Intent i = new Intent(CustomerHistoryActivity.this, NewSessionActivity.class);
-                i.putExtra("patientId", patientId);
+                i.putExtra("customerId", customerId);
                 startActivity(i);
             }
         });
@@ -141,7 +141,7 @@ public class CustomerHistoryActivity extends AppCompatActivity {
 
             case R.id.action_edit_customer:
                 Intent i = new Intent(this, AddCustomerActivity.class);
-                i.putExtra("patientId", patientId);
+                i.putExtra("customerId", customerId);
                 startActivity(i);
                 break;
 
@@ -154,14 +154,14 @@ public class CustomerHistoryActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if (patientId != null) {
+        if (customerId != null) {
 
             //patients = realm.where(Patients.class).equalTo("id", patientId).findFirst();
 
 
             sessionList.clear();
             //sessionList.addAll(MainActivity.doctor.getPatients().get(pos).getSessions());
-            sessionList.addAll(realm.where(Session.class).equalTo("patientId", patientId).findAll());
+            sessionList.addAll(realm.where(Session.class).equalTo("customerId", customerId).findAll());
             Collections.reverse(sessionList);
             mAdapter.notifyDataSetChanged();
 

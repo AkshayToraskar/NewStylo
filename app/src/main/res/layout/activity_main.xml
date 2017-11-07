@@ -15,12 +15,24 @@
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme">
 
+
+
+    </android.support.v7.widget.Toolbar>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.ak.gynaecam.activity.MainActivity">
+
+
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:orientation="horizontal"
+            android:padding="10dp"
             android:weightSum="5">
 
             <EditText
@@ -44,21 +56,12 @@
 
         </LinearLayout>
 
-    </android.support.v7.widget.Toolbar>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context="com.ak.gynaecam.activity.MainActivity">
-
-
-
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_patient"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_below="@+id/linearLayout" />
 
         <LinearLayout
             android:id="@+id/llNoData"
@@ -66,18 +69,19 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
 
-            <!--  <ImageView
-                  android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:src="@drawable/bed" />-->
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:src="@drawable/hanger" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No previous record"
+                android:text="No record found"
+                android:textColor="@color/cardview_dark_background"
                 android:textSize="15sp" />
 
         </LinearLayout>

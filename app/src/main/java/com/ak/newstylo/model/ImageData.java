@@ -12,30 +12,13 @@ public class ImageData extends RealmObject {
 
     @PrimaryKey
     Long id;
-    //byte[] byteArrayImage;
+
     String date;
-    int mediaType; //1-image 2-video
+
     long sessionId;
     String filename;
     String path;
-    boolean isOffline;
-    boolean isBookmark;
 
-    /*public byte[] getByteArrayImage() {
-        return byteArrayImage;
-    }
-
-    public void setByteArrayImage(byte[] byteArrayImage) {
-        this.byteArrayImage = byteArrayImage;
-    }*/
-
-    public boolean getOffline() {
-        return isOffline;
-    }
-
-    public void setOffline(boolean offline) {
-        isOffline = offline;
-    }
 
     public String getDate() {
         return date;
@@ -62,15 +45,7 @@ public class ImageData extends RealmObject {
     }
 
 
-    public int getMediaType() {
-        return mediaType;
-    }
-
-    public void setMediaType(int mediaType) {
-        this.mediaType = mediaType;
-    }
-
-    public String getPath() {
+   public String getPath() {
         return path;
     }
 
@@ -86,11 +61,5 @@ public class ImageData extends RealmObject {
         this.filename = filename;
     }
 
-    public boolean getBookmark() {
-        return isBookmark;
-    }
 
-    public void setBookmark(boolean bookmark) {
-        isBookmark = bookmark;
-    }
 }

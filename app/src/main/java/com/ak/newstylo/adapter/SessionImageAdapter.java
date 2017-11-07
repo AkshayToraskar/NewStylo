@@ -36,7 +36,6 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 
 
-
 /**
  * Created by dg hdghfd on 12-04-2017.
  */
@@ -55,7 +54,6 @@ public class SessionImageAdapter extends RecyclerView.Adapter<SessionImageAdapte
         ImageView ivImage;
 
 
-
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
@@ -68,8 +66,6 @@ public class SessionImageAdapter extends RecyclerView.Adapter<SessionImageAdapte
             });
 
 
-
-
         }
     }
 
@@ -80,16 +76,6 @@ public class SessionImageAdapter extends RecyclerView.Adapter<SessionImageAdapte
         this.previewData = previewData;
         realm = Realm.getDefaultInstance();
 
-       /* Thread thread=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                dynamoDBMapper = Util.initDynamoDbClient(context);
-            }
-        });*/
-
-        //thread.start();
-
-        // awsOperations = new AwsOperations(context);
 
     }
 
@@ -107,39 +93,20 @@ public class SessionImageAdapter extends RecyclerView.Adapter<SessionImageAdapte
 
         Log.v("path", " " + sessionList.get(position).getPath());
 
-        //SessionData/akshay/1505381276384/1505381282706/I20170914_145840
+        if (sessionList.get(position).getPath() != null) {
+            Glide.with(context)//.load(sessionList.get(position).getByteArrayImage())
+                    .load(new File(sessionList.get(position).getPath()))
+                    .thumbnail(0.5f)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .into(holder.ivImage);
 
-
-
-        if (sessionList.get(position).getMediaType() == 1) {
-
-            if (sessionList.get(position).getOffline()) {
-                if (sessionList.get(position).getPath() != null) {
-                    Glide.with(context)//.load(sessionList.get(position).getByteArrayImage())
-                            .load(new File(sessionList.get(position).getPath()))
-                            .thumbnail(0.5f)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .into(holder.ivImage);
-                }
-
-
-        } else {
-
-                Glide.with(context)
-                        .load(Uri.fromFile(new File(sessionList.get(position).getPath())))
-                        .thumbnail(0.5f)
-                        .into(holder.ivImage);
-
-            }
         }
-
     }
 
     @Override
     public int getItemCount() {
         return sessionList.size();
     }
-
 
 
 }

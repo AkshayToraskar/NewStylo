@@ -28,7 +28,7 @@ import io.realm.Realm;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyViewHolder> {
 
-    private List<Customer> patientsList;
+    private List<Customer> customerList;
     private Context context;
     private Realm realm;
 
@@ -53,7 +53,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(context, CustomerHistoryActivity.class);
-                    i.putExtra("patientId", patientsList.get(getPosition()).getId());
+                    i.putExtra("customerId", customerList.get(getPosition()).getId());
                     i.putExtra("pos", getPosition());
                     context.startActivity(i);
                 }
@@ -63,7 +63,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
                 @Override
                 public void onClick(View view) {
                     Intent i = new Intent(context, NewSessionActivity.class);
-                    i.putExtra("patientId", patientsList.get(getPosition()).getId());
+                    i.putExtra("customerId", customerList.get(getPosition()).getId());
                     context.startActivity(i);
                 }
             });
@@ -72,7 +72,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
 
 
     public CustomerAdapter(Context context, List<Customer> patientsList) {
-        this.patientsList = patientsList;
+        this.customerList = patientsList;
         this.context = context;
         realm = Realm.getDefaultInstance();
     }
@@ -88,13 +88,13 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        holder.tvName.setText("Name : " + patientsList.get(position).getFirstname() + " " + patientsList.get(position).getLastname());
-        holder.tvMobile.setText("Mobile : " + patientsList.get(position).getMobile());
+        holder.tvName.setText("Name : " + customerList.get(position).getFullname());
+        holder.tvMobile.setText("Mobile : " + customerList.get(position).getMobile());
 
-        String loc = "-";//(patientsList.get(position).getLocality().equals(null)) || (patientsList.get(position).getLocality().equals("")) ? "-" : patientsList.get(position).getLocality();
+        String loc = (customerList.get(position).getLocality().equals(null)) || (customerList.get(position).getLocality().equals("")) ? "-" : customerList.get(position).getLocality();
         holder.tvLocality.setText("Locality : " + loc);
 
-        long sessionSize = realm.where(Session.class).equalTo("patientId", patientsList.get(position).getId()).count();
+        long sessionSize = realm.where(Session.class).equalTo("customerId", customerList.get(position).getId()).count();
         holder.tvSessionNo.setText(String.valueOf(sessionSize));
 
 
@@ -102,7 +102,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.MyView
 
     @Override
     public int getItemCount() {
-        return patientsList.size();
+        return customerList.size();
     }
 
 }

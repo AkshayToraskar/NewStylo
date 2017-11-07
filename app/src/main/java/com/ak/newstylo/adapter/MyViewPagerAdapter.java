@@ -51,7 +51,7 @@ public class MyViewPagerAdapter extends PagerAdapter {
         final ImageData image = images.get(position);
 
 
-        if (image.getMediaType() == 1) {
+
 
             Glide.with(activity)//.load(image.getByteArrayImage())
                     .load(Uri.fromFile(new File(image.getPath())))
@@ -60,47 +60,9 @@ public class MyViewPagerAdapter extends PagerAdapter {
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(imageViewPreview);
 
-            //rlVideo.setVisibility(GONE);
-
-            //btnEdit.setText("Edit");
-
-        } else if (image.getMediaType() == 2) {
-            //imageViewPreview.setVisibility(View.GONE);
-            //videoView.setVisibility(View.VISIBLE);
-            //  btnEdit.setText("Play");
-
-            Glide.with(activity)
-                    .load(Uri.fromFile(new File(image.getPath())))
-                    .into(imageViewPreview);
-
-            //videoView.setVideoPath(image.getPath());
-
-            //btnPlayVideo.setVisibility(View.VISIBLE);
-        }
-
-        /*rlVideo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                videoView.setVisibility(View.VISIBLE);
-                videoView.setVideoPath(image.getPath());
-                videoView.start();
-
-                btnPlayVideo.setVisibility(GONE);
-                imageViewPreview.setVisibility(GONE);
 
 
-            }
-        });
 
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                videoView.setVisibility(GONE);
-                btnPlayVideo.setVisibility(View.VISIBLE);
-                imageViewPreview.setVisibility(View.VISIBLE);
-            }
-        });*/
 
         container.addView(view);
 

@@ -37,16 +37,14 @@ public class SessionHistoryAdapter extends RecyclerView.Adapter<SessionHistoryAd
     public class MyViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tvDate)
         TextView tvDate;
-        @BindView(R.id.tvAge)
-        TextView tvAge;
-        @BindView(R.id.tvProblem)
-        TextView tvProblem;
-        @BindView(R.id.tvComment)
+        @BindView(R.id.tvBillno)
+        TextView tvBillno;
+
+        @BindView(R.id.tvNote)
         TextView tvComment;
         @BindView(R.id.tvImgCount)
         TextView tvImgCount;
-        @BindView(R.id.tvVideoCount)
-        TextView tvVideoCount;
+
 
 
         public MyViewHolder(View view) {
@@ -60,7 +58,7 @@ public class SessionHistoryAdapter extends RecyclerView.Adapter<SessionHistoryAd
                     //Intent i = new Intent(context, SessionActivity.class);
                     i.putExtra("sessionId", sessionList.get(getPosition()).getId());
                     i.putExtra("pos", getPosition());
-                    i.putExtra("patientId", sessionList.get(getPosition()).getPatientId());
+                    i.putExtra("customerId", sessionList.get(getPosition()).getCustomerId());
                     context.startActivity(i);
                 }
             });
@@ -94,19 +92,14 @@ public class SessionHistoryAdapter extends RecyclerView.Adapter<SessionHistoryAd
         long totalData = imgD.size();
 
 
-        int imgData = 0;
-        for (int i = 0; i < imgD.size(); i++) {
-            if (imgD.get(i).getMediaType() == 1) {
-                imgData++;
-            }
-        }
+
 
         holder.tvDate.setText("Date : " + sessionList.get(position).getDate());
-        holder.tvAge.setText("Age : " + sessionList.get(position).getAge());
-        holder.tvProblem.setText("Problem : " + sessionList.get(position).getProblems());
-        holder.tvComment.setText("Comment : " + sessionList.get(position).getComments());
-        holder.tvImgCount.setText("Images : " + imgData);
-        holder.tvVideoCount.setText("Video : " + (totalData - imgData));
+        holder.tvBillno.setText("Billno : " + sessionList.get(position).getBillNo());
+
+        holder.tvComment.setText("Note : " + sessionList.get(position).getNote());
+        holder.tvImgCount.setText("Images : " + totalData);
+
 
 
 

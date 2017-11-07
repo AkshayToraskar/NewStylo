@@ -8,15 +8,11 @@ import io.realm.annotations.PrimaryKey;
  * Created by dg hdghfd on 12-04-2017.
  */
 
-public class Customer extends RealmObject{
+public class Customer extends RealmObject {
 
     @PrimaryKey
     long id;
-
-    long patientId, docId;
-    String firstname, lastname, mobile, locality;
-    String username;
-
+    String fullname, mobile, locality;
 
     RealmList<Session> sessions;
 
@@ -28,20 +24,12 @@ public class Customer extends RealmObject{
         this.id = id;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
-    }
-
-    public String getLastname() {
-        return lastname;
-    }
-
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public String getMobile() {
@@ -60,21 +48,6 @@ public class Customer extends RealmObject{
         this.locality = locality;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public long getPatientId() {
-        return patientId;
-    }
-
-    public void setPatientId(long patientId) {
-        this.patientId = patientId;
-    }
-
     public RealmList<Session> getSessions() {
         return sessions;
     }
@@ -83,11 +56,4 @@ public class Customer extends RealmObject{
         this.sessions = sessions;
     }
 
-    public long getDocId() {
-        return docId;
-    }
-
-    public void setDocId(long docId) {
-        this.docId = docId;
-    }
 }

@@ -13,13 +13,12 @@ import io.realm.annotations.PrimaryKey;
 public class Session extends RealmObject {
     @PrimaryKey
     long id;
-    // Customer patients;
 
-    int age;
-    String problems, date, comments;
+    String date, note;
+    long billNo;
 
-    long patientId;
-    boolean isUploaded;
+    long customerId;
+    boolean isExported;
     RealmList<ImageData> byteArrayImageData;
 
     public long getId() {
@@ -30,29 +29,6 @@ public class Session extends RealmObject {
         this.id = id;
     }
 
-    /*public Customer getPatients() {
-        return patients;
-    }
-
-    public void setPatients(Customer patients) {
-        this.patients = patients;
-    }
-*/
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public String getProblems() {
-        return problems;
-    }
-
-    public void setProblems(String problems) {
-        this.problems = problems;
-    }
 
     public String getDate() {
         return date;
@@ -62,12 +38,12 @@ public class Session extends RealmObject {
         this.date = date;
     }
 
-    public String getComments() {
-        return comments;
+    public String getNote() {
+        return note;
     }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public RealmList<ImageData> getByteArrayImageData() {
@@ -78,19 +54,29 @@ public class Session extends RealmObject {
         this.byteArrayImageData = byteArrayImageData;
     }
 
-    public long getPatientId() {
-        return patientId;
+    public long getCustomerId() {
+        return customerId;
     }
 
-    public void setPatientId(long patientId) {
-        this.patientId = patientId;
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
     }
 
-    public boolean getUploaded() {
-        return isUploaded;
+    public boolean getExported() {
+        return isExported;
     }
 
     public void setUploaded(boolean uploaded) {
-        isUploaded = uploaded;
+        isExported = uploaded;
     }
+
+    public long getBillNo() {
+        return billNo;
+    }
+
+    public void setBillNo(long billNo) {
+        this.billNo = billNo;
+    }
+
+
 }

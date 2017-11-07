@@ -5,14 +5,12 @@
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <com.ak.gynaecam.helper.TouchImageView
+    <com.ak.newstylo.views.TouchImageView
         android:id="@+id/image_preview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerInParent="true"
         android:scaleType="fitCenter" />
-
-
 
 
 </RelativeLayout>

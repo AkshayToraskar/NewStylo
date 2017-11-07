@@ -46,7 +46,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_patient_history" />
+    <include layout="@layout/content_customer_history" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
