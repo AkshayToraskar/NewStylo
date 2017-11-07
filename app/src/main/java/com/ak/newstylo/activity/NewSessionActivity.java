@@ -154,7 +154,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                 // sessionImageList.clear();
                 // sessionImageList.addAll(realm.where(ImageData.class).equalTo("sessionId", sessionId).findAll());
                 // Collections.reverse(sessionImageList);
-                if (session.getBillNo() != 0) {
+                if (session.getBillNo() != null) {
                     etBillno.setText(String.valueOf(session.getBillNo()));
                 }
                 if (session.getNote() != null) {
@@ -493,7 +493,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                 String noteTxt = etNote.getText().toString().trim();
 
                 if (!billnoTxt.equals("")) {
-                    session.setBillNo(Integer.parseInt(billnoTxt));
+                    session.setBillNo(billnoTxt);
                 }
 
 

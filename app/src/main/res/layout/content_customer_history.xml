@@ -9,12 +9,16 @@
     tools:showIn="@layout/activity_customer_history">
 
 
+
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvSessionHistory"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp"></android.support.v7.widget.RecyclerView>
+        tools:layout_editor_absoluteY="8dp"
+        android:layout_below="@+id/linearLayout"></android.support.v7.widget.RecyclerView>
 
 
     <LinearLayout

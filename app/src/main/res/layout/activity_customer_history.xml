@@ -43,6 +43,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <EditText
+                android:id="@+id/etSearchMeasurment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/text_border_selector"
+                android:hint="Bill no"
+                android:padding="10dp"
+                android:inputType="numberDecimal"
+                android:textColor="@color/grey_100"
+                android:textColorHint="@color/grey_200" />
+
+
+        </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>
 

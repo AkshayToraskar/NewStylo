@@ -34,7 +34,8 @@
 
         <activity
             android:name=".activity.CustomerHistoryActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
 
         <activity android:name=".activity.NewSessionActivity" />
 

@@ -15,7 +15,7 @@ public class Session extends RealmObject {
     long id;
 
     String date, note;
-    long billNo;
+    String billNo;
 
     long customerId;
     boolean isExported;
@@ -70,11 +70,11 @@ public class Session extends RealmObject {
         isExported = uploaded;
     }
 
-    public long getBillNo() {
+    public String getBillNo() {
         return billNo;
     }
 
-    public void setBillNo(long billNo) {
+    public void setBillNo(String billNo) {
         this.billNo = billNo;
     }
 

@@ -387,7 +387,7 @@ public class CameraActivity extends AppCompatActivity {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + ".Gynaecam");
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "NewStylo");
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 
@@ -403,10 +403,10 @@ public class CameraActivity extends AppCompatActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 
         if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + ".Gynaecam" + File.separator +
+            mediaFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "NewStylo" + File.separator +
                     "I" + timeStamp);
         } else if (type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + ".Gynaecam" + File.separator +
+            mediaFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "NewStylo" + File.separator +
                     "V" + timeStamp);
         } else {
             return null;

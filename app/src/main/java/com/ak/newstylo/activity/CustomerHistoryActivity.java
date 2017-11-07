@@ -10,9 +10,12 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -30,6 +33,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class CustomerHistoryActivity extends AppCompatActivity {
 
@@ -42,6 +46,8 @@ public class CustomerHistoryActivity extends AppCompatActivity {
     RecyclerView rvSessionHistory;
     @BindView(R.id.llNoData)
     LinearLayout llNoData;
+    @BindView(R.id.etSearchMeasurment)
+    EditText etSearchMeasurment;
 
     private List<Session> sessionList;
     public SessionHistoryAdapter mAdapter;
@@ -119,6 +125,36 @@ public class CustomerHistoryActivity extends AppCompatActivity {
                 Intent i = new Intent(CustomerHistoryActivity.this, NewSessionActivity.class);
                 i.putExtra("customerId", customerId);
                 startActivity(i);
+            }
+        });
+
+        etSearchMeasurment.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                sessionList.clear();
+                if (editable == null) {
+                    RealmResults<Session> results = realm.where(Session.class).findAll();
+                    sessionList.addAll(results);
+                    Collections.reverse(sessionList);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+
+                    sessionList.addAll(realm.where(Session.class).beginsWith("billNo", String.valueOf(editable)).findAll());
+                    Collections.reverse(sessionList);
+                    mAdapter.notifyDataSetChanged();
+
+                }
             }
         });
     }
