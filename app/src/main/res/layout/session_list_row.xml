@@ -7,10 +7,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="10dp">
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -21,8 +21,8 @@
                 android:id="@+id/imageView"
                 android:layout_width="100dp"
                 android:layout_height="80dp"
-                android:layout_marginLeft="20dp"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
                 android:padding="10dp"
                 android:src="@drawable/measuring_tape" />
 
@@ -35,36 +35,52 @@
                 android:orientation="vertical"
                 android:padding="10dp">
 
-                <TextView
-                    android:id="@+id/tvDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Date"
-                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvBillno"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Billno" />
+                    android:text="Billno"
+                    android:textSize="19dp"
+                    android:textStyle="bold" />
 
 
                 <TextView
                     android:id="@+id/tvNote"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Note" />
+
+                    android:text="Note"
+                    android:textSize="16dp" />
 
 
-                <TextView
-                    android:id="@+id/tvImgCount"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Image" />
+                    android:orientation="horizontal"
+                    android:weightSum="2">
 
+                    <TextView
+                        android:id="@+id/tvImgCount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
 
+                        android:gravity="left"
+                        android:text="Image"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/tvDate"
+
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="Date"
+                        android:textSize="16dp" />
+                </LinearLayout>
             </LinearLayout>
-
 
 
         </RelativeLayout>
@@ -76,9 +92,9 @@
         android:id="@+id/view"
         android:layout_width="10dp"
         android:layout_height="20dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginRight="10dp"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="18dp"
         android:background="@color/cardview_dark_background" />
 
 

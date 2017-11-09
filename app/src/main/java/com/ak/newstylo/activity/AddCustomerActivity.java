@@ -25,8 +25,8 @@ import io.realm.Realm;
 
 public class AddCustomerActivity extends AppCompatActivity {
 
-   /* @BindView(R.id.etId)
-    EditText etId;*/
+    /* @BindView(R.id.etId)
+     EditText etId;*/
     @BindView(R.id.etFirstName)
     EditText etFirstName;
     /*@BindView(R.id.etLastName)
@@ -119,14 +119,22 @@ public class AddCustomerActivity extends AppCompatActivity {
                     etFirstName.setError(null);
                 }
 
-                if (validate.validateString(etMobile.getText().toString())) {
+                /*if (validate.validateString(etMobile.getText().toString())) {
                     etMobile.setError("Enter Mobile No");
                     return;
                 }
-                else if(!validate.isValidMobile(etMobile.getText())){
+                else */
+                if (!validate.isValidMobile(etMobile.getText()) && !validate.validateString(etMobile.getText().toString())) {
                     etMobile.setError("Enter Valid Mobile");
+
+                    Customer pats = realm.where(Customer.class).equalTo("mobile", etMobile.getText().toString()).findFirst();
+                    if (!update && pats != null) {
+                        Toast.makeText(this, "Customer mobile already register", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
                     return;
-                }else {
+                } else {
                     etMobile.setError(null);
                 }
 
@@ -136,11 +144,6 @@ public class AddCustomerActivity extends AppCompatActivity {
                     locality = etLocality.getText().toString();
                 }
 
-                Customer pats = realm.where(Customer.class).equalTo("mobile", etMobile.getText().toString()).findFirst();
-                if (!update && pats != null) {
-                    Toast.makeText(this, "Customer mobile already register", Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
                 realm.executeTransaction(new Realm.Transaction() {
                     @Override

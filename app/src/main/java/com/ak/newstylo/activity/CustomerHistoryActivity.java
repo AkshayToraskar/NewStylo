@@ -93,9 +93,8 @@ public class CustomerHistoryActivity extends AppCompatActivity {
 
                 getSupportActionBar().setTitle(customer.getFullname());
 
-
-                tvMobile.setText(customer.getMobile());
-                tvLocality.setText(customer.getLocality());
+                tvMobile.setText("Mobile: " + ((customer.getMobile().equals("")) ? "-" : customer.getMobile()));
+                tvLocality.setText("Locality: " + ((customer.getLocality().equals("")) ? "-" : customer.getLocality()));
 
 
                 //List<Session> aa = patients.getSessions(); //realm.where(Session.class).equalTo("patients.id",patientId).findAll();

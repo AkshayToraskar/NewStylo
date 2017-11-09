@@ -89,7 +89,7 @@ public class SessionHistoryAdapter extends RecyclerView.Adapter<SessionHistoryAd
         long totalData = imgD.size();
 
         holder.tvDate.setText("Date : " + sessionList.get(position).getDate());
-        holder.tvBillno.setText("Billno : " + String.valueOf(sessionList.get(position).getBillNo() == null ? "-" : sessionList.get(position).getBillNo()));
+        holder.tvBillno.setText("Bill No. : " + String.valueOf(sessionList.get(position).getBillNo() == null ? "-" : sessionList.get(position).getBillNo()));
         holder.tvComment.setText("Note : " + String.valueOf(sessionList.get(position).getNote() == null ? "-" : sessionList.get(position).getNote()));
         holder.tvImgCount.setText("Images : " + totalData);
 

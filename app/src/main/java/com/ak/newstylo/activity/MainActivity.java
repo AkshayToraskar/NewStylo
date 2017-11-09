@@ -1,11 +1,14 @@
 package com.ak.newstylo.activity;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,23 +22,37 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ak.newstylo.R;
 import com.ak.newstylo.adapter.CustomerAdapter;
 import com.ak.newstylo.app.SessionManager;
 import com.ak.newstylo.model.Customer;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -65,11 +82,11 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PERMISSION_SETTING = 101;
     String[] permissionsRequired = new String[]{Manifest.permission.CAMERA,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.RECORD_AUDIO};
+            Manifest.permission.READ_EXTERNAL_STORAGE};
     private SharedPreferences permissionStatus;
     private boolean sentToSettings = false;
-
+    public static int REQUEST_CODE = 14;
+    private File selectedFile;
 
     SessionManager sessionManager;
     public static int spnPosition = 0;
@@ -201,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_export:
                 //startActivity(new Intent(this, ProfileActivity.class));
-
+                showDialog(this, "Import/Export Data");
                 break;
 
 
@@ -235,12 +252,10 @@ public class MainActivity extends AppCompatActivity {
     public void getPermission() {
         if (ActivityCompat.checkSelfPermission(this, permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, permissionsRequired[1]) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, permissionsRequired[2]) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, permissionsRequired[3]) != PackageManager.PERMISSION_GRANTED) {
+                || ActivityCompat.checkSelfPermission(this, permissionsRequired[2]) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[0])
                     || ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[1])
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[2])
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[3])) {
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[2])) {
                 //Show Information about why you need the permission
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Need Multiple Permissions");
@@ -320,8 +335,7 @@ public class MainActivity extends AppCompatActivity {
                 proceedAfterPermission();
             } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[0])
                     || ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[1])
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[2])
-                    || ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[3])) {
+                    || ActivityCompat.shouldShowRequestPermissionRationale(this, permissionsRequired[2])) {
                 //   txtPermissions.setText("Permissions Required");
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Need Multiple Permissions");
@@ -351,5 +365,199 @@ public class MainActivity extends AppCompatActivity {
         // Toast.makeText(getBaseContext(), "We got All Permissions", Toast.LENGTH_LONG).show();
     }
 
+    public void showDialog(Activity activity, String msg) {
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog);
+
+        TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
+        ImageView ivClose = (ImageView) dialog.findViewById(R.id.iv_close);
+        Button btnImport = (Button) dialog.findViewById(R.id.btn_import);
+        Button btnExport = (Button) dialog.findViewById(R.id.btn_export);
+
+        text.setText(msg);
+        ivClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        btnImport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FilePickerActivityLatest.class);
+                startActivityForResult(intent, REQUEST_CODE);
+
+                dialog.dismiss();
+            }
+        });
+
+        btnExport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generateCSV();
+
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+
+            if (data.hasExtra(FilePickerActivity.EXTRA_FILE_PATH)) {
+
+                selectedFile = new File
+                        (data.getStringExtra(FilePickerActivity.EXTRA_FILE_PATH));
+
+
+                Log.v("file path", " " + selectedFile.getPath());
+                parseCSVData();
+            }
+
+
+        }
+
+    }
+
+    //export the data into csv file
+    public void generateCSV() {
+
+       /* try {
+
+            File myDirectory = new File(Environment.getExternalStorageDirectory(), "NewStylo");
+            if (!myDirectory.exists()) {
+                myDirectory.mkdirs();
+            }
+            String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
+
+            List<String[]> data = new ArrayList<String[]>();
+
+            CsvOperation csvOperation = new CsvOperation(surveyHistory, survId);
+            List<String[]> strData = csvOperation.generateString();
+            Survey survey = realm.where(Survey.class).equalTo("id", survId).findFirst();
+
+            String csv = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "SEARCH" + File.separator + survey.getName() + "_" + "Ans_" + currentDateTimeString + ".csv";
+            CSVWriter writer = null;
+            writer = new CSVWriter(new FileWriter(csv));
+
+            for (int k = 0; k < strData.size(); k++) {
+                data.add(strData.get(k));
+            }
+
+
+            writer.writeAll(data);
+            writer.close();
+            Log.v("Export Data", "SUCCESS");
+
+            Toast.makeText(getApplicationContext(), "Data Exported Successfully into " + survey.getName() + "_" + "Ans_" + currentDateTimeString + ".csv file", Toast.LENGTH_LONG).show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.v("Export Data", "FAIL");
+        }*/
+    }
+
+
+    //import csv data
+    private void parseCSVData() {
+
+
+        /*CSVReader reader;
+        try {
+
+            if (getFileExt(selectedFile.getName()).equals("csv")) {
+
+
+                reader = new CSVReader(new FileReader(selectedFile));
+                String[] row;
+                List<?> content = reader.readAll();
+
+                int rowCount = 0;
+
+                if (content != null) {
+
+                    for (Object object : content) {
+                        if (rowCount > 0) {
+                            row = (String[]) object;
+                            for (int i = 0; i < row.length; i++) {
+                                // display CSV values
+                                System.out.println("Cell column index: " + i);
+                                System.out.println("Cell Value: " + row[i]);
+                                System.out.println("-------------");
+                            }
+
+                            final String strId = row[0] + row[2] + row[3] + row[5];
+
+                            final String[] finalRow = row;
+                            realm.executeTransaction(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    long id = Long.parseLong(finalRow[13]);
+                                    Patients patients = realm.where(Patients.class).equalTo("id", id).findFirst();
+
+                                    if (patients == null) {
+                                        patients = realm.createObject(Patients.class, id);
+                                    }
+
+                                    patients.setHouseId(strId);
+                                    patients.setPatientname(finalRow[7]);
+                                    patients.setAge(Integer.parseInt(finalRow[8]));
+                                    patients.setSex(Integer.parseInt(finalRow[9]));
+
+                                    *//*DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                                    Date date = new Date();
+                                    dateFormat.format(date);
+                                    patients.setSaveDate(date);*//*
+
+                                    realm.copyToRealmOrUpdate(patients);
+                                }
+                            });
+
+                        } else {
+                            rowCount = rowCount + 1;
+                        }
+
+
+                    }
+                }
+
+                patientList.addAll(realm.where(Patients.class).findAll());
+                mAdapter.notifyDataSetChanged();
+
+                Toast.makeText(getApplicationContext(), "Data Successfully Imported..!", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Select .csv file", Toast.LENGTH_SHORT).show();
+            }
+
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+
+            Toast.makeText(getApplicationContext(), "File is not proper format", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            Toast.makeText(getApplicationContext(), "File is not proper format", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            Toast.makeText(getApplicationContext(), "File is not proper format", Toast.LENGTH_SHORT).show();
+        }*/
+
+
+    }
+
+
+    public static String getFileExt(String fileName) {
+
+        return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length()).trim();
+    }
 
 }
