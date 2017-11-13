@@ -7,9 +7,10 @@
     tools:context="com.ak.newstylo.activity.SplashActivity">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="150dp"
+        android:id="@+id/iv_logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerInParent="true"
         android:src="@drawable/web_hi_res_512" />
 
     <TextView
@@ -19,6 +20,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="20dp"
         android:gravity="center"
-        android:text="Design and Developed by\n aksh.planet" />
+        android:text="Design and Developed by\n \u2764 aksh.planet" />
 
 </RelativeLayout>

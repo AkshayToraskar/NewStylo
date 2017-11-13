@@ -96,6 +96,7 @@ public class SessionImageAdapter extends RecyclerView.Adapter<SessionImageAdapte
         if (sessionList.get(position).getPath() != null) {
             Glide.with(context)//.load(sessionList.get(position).getByteArrayImage())
                     .load(new File(sessionList.get(position).getPath()))
+                    .placeholder(R.drawable.image_not_found)
                     .thumbnail(0.5f)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(holder.ivImage);

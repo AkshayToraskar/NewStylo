@@ -422,7 +422,6 @@ public class MainActivity extends AppCompatActivity {
                 selectedFile = new File
                         (data.getStringExtra(FilePickerActivity.EXTRA_FILE_PATH));
 
-
                 Log.v("file path", " " + selectedFile.getPath());
                 parseCSVData();
             }
@@ -436,19 +435,14 @@ public class MainActivity extends AppCompatActivity {
     public void generateCSV() {
 
         try {
-
             File myDirectory = new File(Environment.getExternalStorageDirectory(), "NewStylo");
             if (!myDirectory.exists()) {
                 myDirectory.mkdirs();
             }
             String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-
             List<String[]> data = new ArrayList<String[]>();
-
             CsvOperation csvOperation = new CsvOperation();
             List<String[]> strData = csvOperation.generateExportedList();
-
-
             String csv = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "NewStylo" + File.separator + "Exported Data_" + currentDateTimeString + ".csv";
             CSVWriter writer = null;
             writer = new CSVWriter(new FileWriter(csv));
@@ -510,7 +504,6 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("Cell Value: " + row[i]);
                                 System.out.println("-------------");
                             }
-
                             // final String strId = row[0] + row[2] + row[3] + row[5];
 
                             final String[] finalRow = row;
@@ -553,11 +546,8 @@ public class MainActivity extends AppCompatActivity {
                                         imageData.setSessionId(Long.parseLong(finalRow[13]));
                                         realm.copyToRealmOrUpdate(imageData);
                                     }
-
-
                                 }
                             });
-
                         } else {
                             rowCount = rowCount + 1;
                         }
@@ -586,7 +576,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static String getFileExt(String fileName) {
-
         return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length()).trim();
     }
 

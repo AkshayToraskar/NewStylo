@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import com.ak.newstylo.R;
 import com.ak.newstylo.model.Customer;
@@ -18,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
@@ -25,6 +29,9 @@ public class SplashActivity extends AppCompatActivity {
 
     public static int SPLASH_TIME_OUT = 3000;
     Realm realm;
+    Animation animBounce;
+    @BindView(R.id.iv_logo)
+    ImageView ivLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,10 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();
+
+        animBounce = AnimationUtils.loadAnimation(getApplicationContext(),
+                R.anim.zoom_in);
+        ivLogo.startAnimation(animBounce);
 
 
         manageOldData();
