@@ -178,7 +178,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                         //session.setPatients(patients);
                         session.setDate(dateText);
                         session.setCustomerId(customerId);
-                        session.setUploaded(false);
+                        session.setExported(false);
                         //MainActivity.doctor.getPatients().get(PatientHistoryActivity.pos).getSessions().add(session);
                         realm.copyToRealmOrUpdate(session);
                     }
@@ -502,7 +502,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                 }
 
                 session.setByteArrayImageData(sessionImageList);
-                session.setUploaded(false);
+                session.setExported(false);
                 realm.copyToRealmOrUpdate(session);
 
                 Log.v("updated TIme", "" + String.valueOf(new Date().getTime()));

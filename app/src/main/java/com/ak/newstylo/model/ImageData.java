@@ -20,6 +20,9 @@ public class ImageData extends RealmObject {
     String path;
 
 
+    boolean isExported;
+
+
     public String getDate() {
         return date;
     }
@@ -45,7 +48,7 @@ public class ImageData extends RealmObject {
     }
 
 
-   public String getPath() {
+    public String getPath() {
         return path;
     }
 
@@ -61,5 +64,11 @@ public class ImageData extends RealmObject {
         this.filename = filename;
     }
 
+    public boolean isExported() {
+        return isExported;
+    }
 
+    public void setExported(boolean exported) {
+        isExported = exported;
+    }
 }

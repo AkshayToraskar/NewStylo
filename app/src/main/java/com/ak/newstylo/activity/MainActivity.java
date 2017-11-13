@@ -39,8 +39,11 @@ import android.widget.Toast;
 
 import com.ak.newstylo.R;
 import com.ak.newstylo.adapter.CustomerAdapter;
+import com.ak.newstylo.app.CsvOperation;
 import com.ak.newstylo.app.SessionManager;
 import com.ak.newstylo.model.Customer;
+import com.ak.newstylo.model.ImageData;
+import com.ak.newstylo.model.Session;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
@@ -432,7 +435,7 @@ public class MainActivity extends AppCompatActivity {
     //export the data into csv file
     public void generateCSV() {
 
-       /* try {
+        try {
 
             File myDirectory = new File(Environment.getExternalStorageDirectory(), "NewStylo");
             if (!myDirectory.exists()) {
@@ -442,11 +445,11 @@ public class MainActivity extends AppCompatActivity {
 
             List<String[]> data = new ArrayList<String[]>();
 
-            CsvOperation csvOperation = new CsvOperation(surveyHistory, survId);
-            List<String[]> strData = csvOperation.generateString();
-            Survey survey = realm.where(Survey.class).equalTo("id", survId).findFirst();
+            CsvOperation csvOperation = new CsvOperation();
+            List<String[]> strData = csvOperation.generateExportedList();
 
-            String csv = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "SEARCH" + File.separator + survey.getName() + "_" + "Ans_" + currentDateTimeString + ".csv";
+
+            String csv = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "NewStylo" + File.separator + "Exported Data_" + currentDateTimeString + ".csv";
             CSVWriter writer = null;
             writer = new CSVWriter(new FileWriter(csv));
 
@@ -459,33 +462,45 @@ public class MainActivity extends AppCompatActivity {
             writer.close();
             Log.v("Export Data", "SUCCESS");
 
-            Toast.makeText(getApplicationContext(), "Data Exported Successfully into " + survey.getName() + "_" + "Ans_" + currentDateTimeString + ".csv file", Toast.LENGTH_LONG).show();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    List<Session> sessions = realm.where(Session.class).equalTo("isExported", false).findAll();
+                    for (Session se : sessions) {
+                        se.setExported(true);
+                        realm.copyToRealmOrUpdate(se);
+                    }
+
+                    List<ImageData> imgD = realm.where(ImageData.class).equalTo("isExported", false).findAll();
+                    for (ImageData imD : imgD) {
+                        imD.setExported(true);
+                        realm.copyToRealmOrUpdate(imD);
+                    }
+                }
+            });
+
+
+            Toast.makeText(getApplicationContext(), "Data Exported Successfully into " + File.separator + "Exported Data_" + currentDateTimeString + ".csv", Toast.LENGTH_LONG).show();
 
         } catch (IOException e) {
             e.printStackTrace();
             Log.v("Export Data", "FAIL");
-        }*/
+        }
     }
 
 
     //import csv data
     private void parseCSVData() {
 
-
-        /*CSVReader reader;
+        CSVReader reader;
         try {
-
             if (getFileExt(selectedFile.getName()).equals("csv")) {
-
 
                 reader = new CSVReader(new FileReader(selectedFile));
                 String[] row;
                 List<?> content = reader.readAll();
-
                 int rowCount = 0;
-
                 if (content != null) {
-
                     for (Object object : content) {
                         if (rowCount > 0) {
                             row = (String[]) object;
@@ -496,44 +511,60 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("-------------");
                             }
 
-                            final String strId = row[0] + row[2] + row[3] + row[5];
+                            // final String strId = row[0] + row[2] + row[3] + row[5];
 
                             final String[] finalRow = row;
                             realm.executeTransaction(new Realm.Transaction() {
                                 @Override
                                 public void execute(Realm realm) {
-                                    long id = Long.parseLong(finalRow[13]);
-                                    Patients patients = realm.where(Patients.class).equalTo("id", id).findFirst();
+                                    long id = Long.parseLong(finalRow[0]);
+                                    Customer customer = realm.where(Customer.class).equalTo("id", id).findFirst();
+                                    if (customer == null) {
+                                        customer = realm.createObject(Customer.class, id);
+                                    }
+                                    customer.setFullname(finalRow[1]);
+                                    customer.setLocality(finalRow[2]);
+                                    customer.setMobile(finalRow[3]);
+                                    realm.copyToRealmOrUpdate(customer);
 
-                                    if (patients == null) {
-                                        patients = realm.createObject(Patients.class, id);
+
+                                    if (finalRow.length > 4) {
+                                        long sessionId = Long.parseLong(finalRow[4]);
+                                        Session session = realm.where(Session.class).equalTo("id", sessionId).findFirst();
+                                        if (session == null) {
+                                            session = realm.createObject(Session.class, sessionId);
+                                        }
+                                        session.setDate(finalRow[5]);
+                                        session.setBillNo(finalRow[6]);
+                                        session.setNote(finalRow[7]);
+                                        session.setCustomerId(Long.parseLong(finalRow[8]));
+                                        realm.copyToRealmOrUpdate(session);
                                     }
 
-                                    patients.setHouseId(strId);
-                                    patients.setPatientname(finalRow[7]);
-                                    patients.setAge(Integer.parseInt(finalRow[8]));
-                                    patients.setSex(Integer.parseInt(finalRow[9]));
+                                    if (finalRow.length > 9) {
+                                        long imageId = Long.parseLong(finalRow[9]);
+                                        ImageData imageData = realm.where(ImageData.class).equalTo("id", imageId).findFirst();
+                                        if (imageData == null) {
+                                            imageData = realm.createObject(ImageData.class, imageData);
+                                        }
+                                        imageData.setDate(finalRow[10]);
+                                        imageData.setFilename(finalRow[11]);
+                                        imageData.setPath(finalRow[12]);
+                                        imageData.setSessionId(Long.parseLong(finalRow[13]));
+                                        realm.copyToRealmOrUpdate(imageData);
+                                    }
 
-                                    *//*DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                                    Date date = new Date();
-                                    dateFormat.format(date);
-                                    patients.setSaveDate(date);*//*
 
-                                    realm.copyToRealmOrUpdate(patients);
                                 }
                             });
 
                         } else {
                             rowCount = rowCount + 1;
                         }
-
-
                     }
                 }
 
-                patientList.addAll(realm.where(Patients.class).findAll());
                 mAdapter.notifyDataSetChanged();
-
                 Toast.makeText(getApplicationContext(), "Data Successfully Imported..!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Select .csv file", Toast.LENGTH_SHORT).show();
@@ -549,8 +580,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             System.err.println(e.getMessage());
             Toast.makeText(getApplicationContext(), "File is not proper format", Toast.LENGTH_SHORT).show();
-        }*/
-
+        }
 
     }
 

@@ -66,7 +66,7 @@ public class Session extends RealmObject {
         return isExported;
     }
 
-    public void setUploaded(boolean uploaded) {
+    public void setExported(boolean uploaded) {
         isExported = uploaded;
     }
 
