@@ -45,7 +45,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="name"
-                    android:textSize="19dp"
+                    android:textSize="20dp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -53,14 +53,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Mobile"
-                    android:textSize="16dp" />
+                    android:textSize="20dp" />
 
                 <TextView
                     android:id="@+id/tvLocality"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Locality"
-                    android:textSize="16dp" />
+                    android:textSize="20dp" />
 
 
             </LinearLayout>
