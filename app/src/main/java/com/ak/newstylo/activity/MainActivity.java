@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.annotation.IdRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -33,14 +34,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ak.newstylo.R;
 import com.ak.newstylo.adapter.CustomerAdapter;
+import com.ak.newstylo.adapter.SessionHistoryAdapter;
+import com.ak.newstylo.app.CsvOperation;
 import com.ak.newstylo.app.SessionManager;
 import com.ak.newstylo.model.Customer;
+import com.ak.newstylo.model.ImageData;
+import com.ak.newstylo.model.Session;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
@@ -63,18 +70,31 @@ import io.realm.RealmResults;
 public class MainActivity extends AppCompatActivity {
 
     private List<Customer> customerList;
+    private List<Session> sessionList;
+
     @BindView(R.id.rv_patient)
     RecyclerView recyclerView;
-    public CustomerAdapter mAdapter;
+
     @BindView(R.id.etSearchPatient)
     EditText etSearchPatient;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.spnFilter)
-    Spinner spnFilter;
+    /* @BindView(R.id.spnFilter)
+     Spinner spnFilter;*/
+    @BindView(R.id.rg_filter)
+    RadioGroup rgFilter;
+    @BindView(R.id.rb_name)
+    RadioButton rbName;
+    @BindView(R.id.rb_mobile)
+    RadioButton rbMobile;
+    @BindView(R.id.rb_billno)
+    RadioButton rbBillno;
     @BindView(R.id.llNoData)
     LinearLayout llNoData;
 
+    int rbSelection = 0;
+    public CustomerAdapter mCustomerAdapter;
+    public SessionHistoryAdapter mSessionAdapter;
 
     Realm realm;
 
@@ -105,18 +125,12 @@ public class MainActivity extends AppCompatActivity {
         getPermission();
 
         customerList = new ArrayList<>();
+        sessionList = new ArrayList<>();
 
-        mAdapter = new CustomerAdapter(this, customerList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-        recyclerView.addItemDecoration(itemDecoration);
-        recyclerView.setAdapter(mAdapter);
+        setCustomerAdapter();
 
 
-        spnFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        /*spnFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (i == 0) {
@@ -129,6 +143,49 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
 
+            }
+        });*/
+
+
+        rgFilter.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                switch (i) {
+
+                    case R.id.rb_name:
+                        customerList.clear();
+                        customerList.addAll(realm.where(Customer.class).findAll());
+                        Collections.reverse(customerList);
+
+                        etSearchPatient.setInputType(InputType.TYPE_CLASS_TEXT);
+                        rbSelection = 0;
+                        setCustomerAdapter();
+                        etSearchPatient.setHint("Search Customer by Name");
+                        break;
+
+                    case R.id.rb_mobile:
+                        customerList.clear();
+                        customerList.addAll(realm.where(Customer.class).findAll());
+                        Collections.reverse(customerList);
+
+                        etSearchPatient.setInputType(InputType.TYPE_CLASS_PHONE);
+                        rbSelection = 1;
+                        setCustomerAdapter();
+                        etSearchPatient.setHint("Search Customer by Mobile");
+                        break;
+
+                    case R.id.rb_billno:
+                        etSearchPatient.setInputType(InputType.TYPE_CLASS_PHONE);
+                        rbSelection = 2;
+
+                        sessionList.clear();
+                        sessionList.addAll(realm.where(Session.class).findAll());
+                        Collections.reverse(sessionList);
+                        setSessionAdapter();
+                        etSearchPatient.setHint("Search measurment by billno");
+                        break;
+
+                }
             }
         });
 
@@ -149,32 +206,54 @@ public class MainActivity extends AppCompatActivity {
 
                 customerList.clear();
                 if (editable == null) {
-                    RealmResults<Customer> results = realm.where(Customer.class).findAll();
-                    customerList.addAll(results);
-                    Collections.reverse(customerList);
-                    mAdapter.notifyDataSetChanged();
+                    switch (rbSelection) {
+                        case 0:
+                        case 1:
+                            RealmResults<Customer> results = realm.where(Customer.class).findAll();
+                            customerList.addAll(results);
+                            Collections.reverse(customerList);
+                            notifyData();
+                            break;
+
+                        case 2:
+                            sessionList.clear();
+                            sessionList.addAll(realm.where(Session.class).findAll());
+                            Collections.reverse(sessionList);
+                            notifyData();
+                            break;
+                    }
+
+                    //mAdapter.notifyDataSetChanged();
                 } else {
 
-                    spnPosition = spnFilter.getSelectedItemPosition();
+                    // spnPosition = spnFilter.getSelectedItemPosition();
 
 
-                    switch (spnPosition) {
+                    switch (rbSelection) {
 
                         case 0:
 
-                            customerList.addAll(realm.where(Customer.class).beginsWith("fullname", String.format(editable.toString()).toLowerCase()).findAll());
+                            customerList.addAll(realm.where(Customer.class).beginsWith("fullname", String.format(editable.toString())).findAll());
                             Collections.reverse(customerList);
 
-                            mAdapter.notifyDataSetChanged();
+                            mCustomerAdapter.notifyDataSetChanged();
                             break;
 
                         case 1:
 
-                            customerList.addAll(realm.where(Customer.class).beginsWith("mobile", String.format(editable.toString()).toLowerCase()).findAll());
+                            customerList.addAll(realm.where(Customer.class).beginsWith("mobile", String.format(editable.toString())).findAll());
                             Collections.reverse(customerList);
 
-                            mAdapter.notifyDataSetChanged();
+                            mCustomerAdapter.notifyDataSetChanged();
 
+                            break;
+
+                        case 2:
+                            sessionList.clear();
+                            sessionList.addAll(realm.where(Session.class).beginsWith("billNo", String.format(editable.toString())).findAll());
+                            Collections.reverse(sessionList);
+
+                            mSessionAdapter.notifyDataSetChanged();
                             break;
 
 
@@ -187,6 +266,46 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+    public void setCustomerAdapter() {
+        mCustomerAdapter = new CustomerAdapter(this, customerList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        /*RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(itemDecoration);*/
+        recyclerView.setAdapter(mCustomerAdapter);
+    }
+
+    public void setSessionAdapter() {
+        mSessionAdapter = new SessionHistoryAdapter(this, sessionList);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        /*RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        recyclerView.addItemDecoration(itemDecoration);*/
+        recyclerView.setAdapter(mSessionAdapter);
+    }
+
+    public void notifyData() {
+        switch (rbSelection) {
+            case 0:
+                mCustomerAdapter.notifyDataSetChanged();
+                break;
+
+            case 1:
+                mCustomerAdapter.notifyDataSetChanged();
+                break;
+
+            case 2:
+                mSessionAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
 
     public void onBtnClick(View view) {
         int id = view.getId();
@@ -230,12 +349,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        switch (rbSelection) {
+            case 0:
+            case 1:
+                customerList.clear();
+                customerList.addAll(realm.where(Customer.class).findAll());
+                Collections.reverse(customerList);
+                setCustomerAdapter();
+                break;
 
-        customerList.clear();
-        customerList.addAll(realm.where(Customer.class).findAll());
-        Collections.reverse(customerList);
+            case 2:
+                sessionList.clear();
+                sessionList.addAll(realm.where(Session.class).findAll());
+                Collections.reverse(sessionList);
+                setSessionAdapter();
+                break;
+        }
 
-        mAdapter.notifyDataSetChanged();
+
+        //mAdapter.notifyDataSetChanged();
+        notifyData();
 
         if (customerList.size() > 0) {
             recyclerView.setVisibility(View.VISIBLE);
@@ -429,24 +562,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     //export the data into csv file
     public void generateCSV() {
 
-       /* try {
-
+        try {
             File myDirectory = new File(Environment.getExternalStorageDirectory(), "NewStylo");
             if (!myDirectory.exists()) {
                 myDirectory.mkdirs();
             }
             String currentDateTimeString = DateFormat.getDateTimeInstance().format(new Date());
-
             List<String[]> data = new ArrayList<String[]>();
-
-            CsvOperation csvOperation = new CsvOperation(surveyHistory, survId);
-            List<String[]> strData = csvOperation.generateString();
-            Survey survey = realm.where(Survey.class).equalTo("id", survId).findFirst();
-
-            String csv = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "SEARCH" + File.separator + survey.getName() + "_" + "Ans_" + currentDateTimeString + ".csv";
+            CsvOperation csvOperation = new CsvOperation();
+            List<String[]> strData = csvOperation.generateExportedList();
+            String csv = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "NewStylo" + File.separator + "Exported Data_" + currentDateTimeString + ".csv";
             CSVWriter writer = null;
             writer = new CSVWriter(new FileWriter(csv));
 
@@ -459,33 +588,44 @@ public class MainActivity extends AppCompatActivity {
             writer.close();
             Log.v("Export Data", "SUCCESS");
 
-            Toast.makeText(getApplicationContext(), "Data Exported Successfully into " + survey.getName() + "_" + "Ans_" + currentDateTimeString + ".csv file", Toast.LENGTH_LONG).show();
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    List<Session> sessions = realm.where(Session.class).equalTo("isExported", false).findAll();
+                    for (Session se : sessions) {
+                        se.setExported(true);
+                        realm.copyToRealmOrUpdate(se);
+                    }
+
+                    List<ImageData> imgD = realm.where(ImageData.class).equalTo("isExported", false).findAll();
+                    for (ImageData imD : imgD) {
+                        imD.setExported(true);
+                        realm.copyToRealmOrUpdate(imD);
+                    }
+                }
+            });
+
+
+            Toast.makeText(getApplicationContext(), "Data Exported Successfully into " + File.separator + "Exported Data_" + currentDateTimeString + ".csv", Toast.LENGTH_LONG).show();
 
         } catch (IOException e) {
             e.printStackTrace();
             Log.v("Export Data", "FAIL");
-        }*/
+        }
     }
-
 
     //import csv data
     private void parseCSVData() {
 
-
-        /*CSVReader reader;
+        CSVReader reader;
         try {
-
             if (getFileExt(selectedFile.getName()).equals("csv")) {
-
 
                 reader = new CSVReader(new FileReader(selectedFile));
                 String[] row;
                 List<?> content = reader.readAll();
-
                 int rowCount = 0;
-
                 if (content != null) {
-
                     for (Object object : content) {
                         if (rowCount > 0) {
                             row = (String[]) object;
@@ -495,45 +635,57 @@ public class MainActivity extends AppCompatActivity {
                                 System.out.println("Cell Value: " + row[i]);
                                 System.out.println("-------------");
                             }
-
-                            final String strId = row[0] + row[2] + row[3] + row[5];
+                            // final String strId = row[0] + row[2] + row[3] + row[5];
 
                             final String[] finalRow = row;
                             realm.executeTransaction(new Realm.Transaction() {
                                 @Override
                                 public void execute(Realm realm) {
-                                    long id = Long.parseLong(finalRow[13]);
-                                    Patients patients = realm.where(Patients.class).equalTo("id", id).findFirst();
+                                    long id = Long.parseLong(finalRow[0]);
+                                    Customer customer = realm.where(Customer.class).equalTo("id", id).findFirst();
+                                    if (customer == null) {
+                                        customer = realm.createObject(Customer.class, id);
+                                    }
+                                    customer.setFullname(finalRow[1]);
+                                    customer.setLocality(finalRow[2]);
+                                    customer.setMobile(finalRow[3]);
+                                    realm.copyToRealmOrUpdate(customer);
 
-                                    if (patients == null) {
-                                        patients = realm.createObject(Patients.class, id);
+
+                                    if (finalRow.length > 4) {
+                                        long sessionId = Long.parseLong(finalRow[4]);
+                                        Session session = realm.where(Session.class).equalTo("id", sessionId).findFirst();
+                                        if (session == null) {
+                                            session = realm.createObject(Session.class, sessionId);
+                                        }
+                                        session.setDate(finalRow[5]);
+                                        session.setBillNo(finalRow[6]);
+                                        session.setNote(finalRow[7]);
+                                        session.setCustomerId(Long.parseLong(finalRow[8]));
+                                        realm.copyToRealmOrUpdate(session);
                                     }
 
-                                    patients.setHouseId(strId);
-                                    patients.setPatientname(finalRow[7]);
-                                    patients.setAge(Integer.parseInt(finalRow[8]));
-                                    patients.setSex(Integer.parseInt(finalRow[9]));
-
-                                    *//*DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-                                    Date date = new Date();
-                                    dateFormat.format(date);
-                                    patients.setSaveDate(date);*//*
-
-                                    realm.copyToRealmOrUpdate(patients);
+                                    if (finalRow.length > 9) {
+                                        long imageId = Long.parseLong(finalRow[9]);
+                                        ImageData imageData = realm.where(ImageData.class).equalTo("id", imageId).findFirst();
+                                        if (imageData == null) {
+                                            imageData = realm.createObject(ImageData.class, imageData);
+                                        }
+                                        imageData.setDate(finalRow[10]);
+                                        imageData.setFilename(finalRow[11]);
+                                        imageData.setPath(finalRow[12]);
+                                        imageData.setSessionId(Long.parseLong(finalRow[13]));
+                                        realm.copyToRealmOrUpdate(imageData);
+                                    }
                                 }
                             });
-
                         } else {
                             rowCount = rowCount + 1;
                         }
-
-
                     }
                 }
 
-                patientList.addAll(realm.where(Patients.class).findAll());
-                mAdapter.notifyDataSetChanged();
-
+                notifyData();
                 Toast.makeText(getApplicationContext(), "Data Successfully Imported..!", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(getApplicationContext(), "Select .csv file", Toast.LENGTH_SHORT).show();
@@ -549,15 +701,12 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             System.err.println(e.getMessage());
             Toast.makeText(getApplicationContext(), "File is not proper format", Toast.LENGTH_SHORT).show();
-        }*/
-
+        }
 
     }
 
 
     public static String getFileExt(String fileName) {
-
         return fileName.substring(fileName.lastIndexOf(".") + 1, fileName.length()).trim();
     }
-
 }
