@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -72,12 +74,17 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
     LinearLayout llNodata;
     @BindView(R.id.fabCapture)
     FloatingActionButton fabCapture;
-
+    @BindView(R.id.tvMobile)
+    TextView tvMobile;
+    @BindView(R.id.tvLocality)
+    TextView tvLocality;
+    @BindView(R.id.tvDate)
+    TextView tvDate;
     public static SaveCapturedData saveCapturedData;
     Realm realm;
     Validate validate;
 
-    Long  sessionId;
+    Long sessionId;
     Customer customer;
 
     public static long editImageId;
@@ -87,7 +94,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
     Session session;
     String dateText;
 
-   // Customer patients;
+    // Customer patients;
 
     int sessionPos;
     //AwsOp awsopListener;
@@ -102,6 +109,10 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_session);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         validate = new Validate();
         ButterKnife.bind(this);
         realm = Realm.getDefaultInstance();
@@ -118,7 +129,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
 
         imageData = new ArrayList<>();
 
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("New Session");
 
@@ -145,7 +156,13 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
             sessionId = getIntent().getExtras().getLong("sessionId");
             sessionPos = getIntent().getExtras().getInt("pos");
             customer = realm.where(Customer.class).equalTo("id", customerId).findFirst();
+            Log.v("customer id", " " + customerId);
 
+            if (customer != null) {
+                getSupportActionBar().setTitle(customer.getFullname().equals("") || customer.getFullname() == null ? "New Session" : customer.getFullname());
+                tvMobile.setText("Mobile: " + (customer.getMobile().equals("") || customer.getFullname() == null ? "-" : customer.getMobile()));
+                tvLocality.setText("Locality: " + (customer.getLocality().equals("") || customer.getFullname() == null ? "-" : customer.getLocality()));
+            }
 
             if (sessionId != 0) {
                 session = realm.where(Session.class).equalTo("id", sessionId).findFirst();
@@ -161,10 +178,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                     etNote.setText(session.getNote() + " ");
                 }
 
-                getSupportActionBar().setTitle(session.getDate());
-
-
-
+                tvDate.setText("Date: " + session.getDate());
 
 
             } else {
@@ -247,9 +261,19 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
         switch (id) {
 
             case android.R.id.home:
+                if (etBillno.getText().toString().equals("") && etNote.getText().toString().equals("") && sessionImageList.size() == 0) {
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            session.deleteFromRealm();
+                            Log.v("Session", "Deleted");
+                        }
+                    });
+
+                }
+
                 finish();
                 break;
-
 
 
             case R.id.action_delete_session:
@@ -279,9 +303,23 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                 break;
 
 
-
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (etBillno.getText().toString().equals("") && etNote.getText().toString().equals("") && sessionImageList.size() == 0) {
+            realm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    session.deleteFromRealm();
+                    Log.v("Session", "Deleted");
+                }
+            });
+        }
+
     }
 
     @Override
@@ -308,9 +346,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                         public void execute(Realm realm) {
                             ImageData imgdata = realm.where(ImageData.class).equalTo("id", editImageId).findFirst();
                                     /*imgdata.setByteArrayImage(inputData);*/
-
                             imgdata.setSessionId(sessionId);
-
                             imgdata.setDate(String.valueOf(new Date()));
                             imgdata.setPath(filepath);
                             realm.copyToRealmOrUpdate(imgdata);
@@ -489,7 +525,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
             public void execute(Realm realm) {
 
                 String billnoTxt = etBillno.getText().toString().trim();
-               // String problemTxt = etProblems.getText().toString().trim();
+                // String problemTxt = etProblems.getText().toString().trim();
                 String noteTxt = etNote.getText().toString().trim();
 
                 if (!billnoTxt.equals("")) {
@@ -507,6 +543,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
 
                 Log.v("updated TIme", "" + String.valueOf(new Date().getTime()));
                 sessionManager.setLastUpdateTime(String.valueOf(new Date().getTime()));
+
 
             }
         });
@@ -539,223 +576,6 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
         sessionImageList.addAll(realm.where(ImageData.class).equalTo("sessionId", sessionId).findAll());
         mAdapter.notifyDataSetChanged();
     }
-
-
-    /*public void generatePdf() throws DocumentException, IOException {
-        // Destination Folder and File name
-        String FILE = Environment.getExternalStorageDirectory().toString()
-                + "/.Gynaecam/" + "Report_" + session.getId() + ".pdf";
-        // Add Permission into Manifest.xml
-        //
-
-        // Create New Blank Document
-        Document document = new Document(PageSize.A4);
-
-        // Create Directory in External Storage
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/GynaecamPDF");
-        myDir.mkdirs();
-
-        // Create Pdf Writer for Writting into New Created Document
-        PdfWriter.getInstance(document, new FileOutputStream(FILE));
-
-        // Open Document for Writting into document
-        document.open();
-
-        // User Define Method
-        addMetaData(document);
-        addTitlePage(document);
-        addImages(document);
-        // Close Document after writting all content
-        document.close();
-        Toast.makeText(this, "Pdf Successfully Generated!", Toast.LENGTH_SHORT).show();
-
-        removedChangeFilename();
-
-    }
-
-
-    // Set PDF document Properties
-    public void addMetaData(Document document) {
-        document.addTitle("Gynaecam Reports");
-        document.addSubject("patients reports");
-        document.addKeywords("checkup, cancer, cure");
-        document.addAuthor("Gynaecam");
-        document.addCreator("Gynaecam");
-    }
-
-    public void addTitlePage(Document document) throws DocumentException {
-
-
-        Font normal = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL);
-
-        // Create Table into Document with 2 Row
-        PdfPTable myTable = new PdfPTable(2);
-        myTable.setWidthPercentage(100.0f);
-        myTable.setSpacingBefore(10f);
-        myTable.setSpacingAfter(10f);
-
-
-        //prHead.setFont(normal);
-        myTable.addCell("Patient Name: " + patients.getFirstname() + " " + patients.getLastname());
-        myTable.addCell("Date of visit: " + session.getDate());
-        myTable.addCell("Address: " + patients.getLocality());
-        myTable.addCell("Mobile: " + patients.getMobile());
-        myTable.addCell("Problem: " + session.getProblems());
-        myTable.addCell("Age: " + session.getAge());
-        myTable.addCell("Diagnosis: " + session.getComments());
-        document.add(myTable);
-
-        Paragraph prProfile = new Paragraph();
-        prProfile.add("\n \n Image : \n ");
-        //  prProfile.add("\nI am Mr. XYZ. I am Android Application Developer at TAG.");
-        prProfile.setFont(normal);
-        document.add(prProfile);
-    }*/
-
-    /*public static final String[] IMAGES = {
-            Environment.getExternalStorageDirectory().toString() + "/.Gynaecam/aa0.jpeg",
-            Environment.getExternalStorageDirectory().toString() + "/.Gynaecam/aa1.jpeg",
-            Environment.getExternalStorageDirectory().toString() + "/.Gynaecam/aa1.jpeg",
-            Environment.getExternalStorageDirectory().toString() + "/.Gynaecam/aa0.jpeg",
-            Environment.getExternalStorageDirectory().toString() + "/.Gynaecam/aa0.jpeg",
-            Environment.getExternalStorageDirectory().toString() + "/.Gynaecam/aa1.jpeg",
-            Environment.getExternalStorageDirectory().toString() + "/.Gynaecam/aa1.jpeg",
-            Environment.getExternalStorageDirectory().toString() + "/.Gynaecam/aa0.jpeg"
-    };
-*/
-    /*public void addImages(Document document) throws IOException, DocumentException {
-
-
-        //Image img = Image.getInstance(IMAGES[0]);
-        PdfPTable imageTable = new PdfPTable(2);
-        imageTable.setWidthPercentage(100.0f);
-
-        generateImageList();
-
-        for (String image : imgList) {
-            Image img = Image.getInstance(image);
-
-            img.scalePercent(50);
-
-            PdfPCell cell = new PdfPCell();
-            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-            cell.setPadding(10.0f);
-            cell.setImage(img);
-            cell.setBorderColor(new BaseColor(255, 255, 255));
-            //cell.setBackgroundColor(new BaseColor(140, 221, 8));
-            imageTable.addCell(cell);
-
-            //imageTable.addCell(img);
-        }
-
-        document.add(imageTable);
-    }
-
-    public List<String> imgList = new ArrayList<>();
-
-    public void generateImageList() {
-
-        imgList.clear();
-
-        for (ImageData imageData : sessionImageList) {
-            if (imageData.getBookmark()) {
-                imgList.add(renameFile(imageData.getFilename(), true));
-            }
-        }
-    }
-
-    public void removedChangeFilename() {
-        for (ImageData imageData : sessionImageList) {
-            if (imageData.getBookmark()) {
-                renameFile(imageData.getFilename(), false);
-            }
-        }
-    }
-
-    public String renameFile(String filename, boolean changeExtension) {
-        String changedFileName = "";
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + ".Gynaecam");
-        if (changeExtension) {
-            File from = new File(dir, filename);
-            File to = new File(dir, filename + ".png");
-            if (from.exists()) {
-                from.renameTo(to);
-                changedFileName = to.getPath().toString();
-            }
-        } else {
-            File from = new File(dir, filename + ".png");
-            File to = new File(dir, filename);
-            if (from.exists()) {
-                from.renameTo(to);
-                changedFileName = to.getPath().toString();
-            }
-        }
-        return changedFileName;
-    }*/
-
-
-    /*public void addTitlePage(Document document) throws DocumentException {
-        // Font Style for Document
-        Font catFont = new Font(Font.FontFamily.TIMES_ROMAN, 18, Font.BOLD);
-        Font titleFont = new Font(Font.FontFamily.TIMES_ROMAN, 22, Font.BOLD
-                | Font.UNDERLINE, BaseColor.GRAY);
-        Font smallBold = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-        Font normal = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.NORMAL);
-
-        // Start New Paragraph
-        Paragraph prHead = new Paragraph();
-        // Set Font in this Paragraph
-        prHead.setFont(titleFont);
-        // Add item into Paragraph
-        //prHead.add("RESUME – Name\n");
-
-        // Create Table into Document with 1 Row
-        PdfPTable myTable = new PdfPTable(2);
-        // 100.0f mean width of table is same as Document size
-        myTable.setWidthPercentage(100.0f);
-
-        // Create New Cell into Table
-        //PdfPCell myCell = new PdfPCell(new Paragraph(""));
-        //myCell.setBorder(Rectangle.BOTTOM);
-
-        // Add Cell into Table
-        //myTable.addCell(myCell);
-
-        prHead.setFont(normal);
-        prHead.add("\nPatient Name: " + patients.getFirstname() + " " + patients.getLastname() + "\t\t");
-        prHead.add("                      Date of visit: " + session.getDate() + "\n");
-        prHead.add("\nAddress: " + patients.getLocality() + "\t\t                      Mobile: " + patients.getMobile());
-        prHead.setAlignment(Element.ALIGN_LEFT);
-
-        // Add all above details into Document
-        document.add(prHead);
-        //document.add(myTable);
-        //document.add(myTable);
-
-        // Now Start another New Paragraph
-        Paragraph prPersinalInfo = new Paragraph();
-        prPersinalInfo.setFont(normal);
-        prPersinalInfo.add("\nProblem: " + session.getProblems() + "\t\t                      Age: " + session.getAge() + "\n");
-        prPersinalInfo.add("\nDiagnosis: " + session.getComments() + "\n\n");
-        //prPersinalInfo.add("Mobile: 9821513044 Fax: 1111111 Email: john_pit@gmail.com \n");
-        prPersinalInfo.setAlignment(Element.ALIGN_LEFT);
-
-        document.add(prPersinalInfo);
-        document.add(myTable);
-        document.add(myTable);
-
-        Paragraph prProfile = new Paragraph();
-        prProfile.setFont(normal);
-        prProfile.add("\n \n Image : \n ");
-        prProfile.setFont(normal);
-        //  prProfile.add("\nI am Mr. XYZ. I am Android Application Developer at TAG.");
-        prProfile.setFont(smallBold);
-        document.add(prProfile);
-
-        // Create new Page in PDF
-        // document.newPage();
-    }*/
 
 
 }

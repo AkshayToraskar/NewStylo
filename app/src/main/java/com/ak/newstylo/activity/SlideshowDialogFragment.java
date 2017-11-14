@@ -34,8 +34,6 @@ import butterknife.ButterKnife;
 import io.realm.Realm;
 
 
-
-
 public class SlideshowDialogFragment extends DialogFragment {
     private String TAG = SlideshowDialogFragment.class.getSimpleName();
     private ArrayList<ImageData> images;
@@ -220,8 +218,9 @@ public class SlideshowDialogFragment extends DialogFragment {
     private void displayMetaInfo(int position) {
         lblCount.setText((position + 1) + " of " + images.size());
 
-        ImageData image = images.get(position);
-
+        if (images.size() > 0) {
+            ImageData image = images.get(position);
+        }
         /*//IMAGE
         if (image.getMediaType() == 1) {
             btnEdit.setVisibility(View.VISIBLE);

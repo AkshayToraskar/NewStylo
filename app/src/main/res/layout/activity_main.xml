@@ -46,8 +46,14 @@
                     android:id="@+id/rb_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
                     android:layout_weight="1"
+                    android:background="@drawable/rb_background"
+                    android:button="@null"
                     android:checked="true"
+                    android:drawablePadding="5dp"
+                    android:drawableTop="@drawable/ic_face_black_24dp"
+                    android:gravity="center"
                     android:text="Name"
                     android:textColor="@color/white"
                     android:textSize="24dp" />
@@ -56,7 +62,13 @@
                     android:id="@+id/rb_mobile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
                     android:layout_weight="1"
+                    android:background="@drawable/rb_background"
+                    android:button="@null"
+                    android:drawablePadding="5dp"
+                    android:drawableTop="@drawable/ic_phone_android_white_24dp"
+                    android:gravity="center"
                     android:text="Mobile"
                     android:textColor="@color/white"
                     android:textSize="24dp" />
@@ -65,7 +77,13 @@
                     android:id="@+id/rb_billno"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
                     android:layout_weight="1"
+                    android:background="@drawable/rb_background"
+                    android:button="@null"
+                    android:drawablePadding="5dp"
+                    android:drawableTop="@drawable/ic_content_cut_white_24dp"
+                    android:gravity="center"
                     android:text="Billno"
                     android:textColor="@color/white"
                     android:textSize="24dp" />
@@ -81,9 +99,9 @@
                 android:drawableRight="@drawable/ic_search_black_24dp"
                 android:hint="Search Customer"
                 android:padding="10dp"
-                android:textSize="22dp"
                 android:textColor="@color/grey_100"
-                android:textColorHint="@color/grey_200" />
+                android:textColorHint="@color/grey_200"
+                android:textSize="22dp" />
 
             <!--<Spinner
                 android:id="@+id/spnFilter"

@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -88,6 +89,8 @@ public class CustomerHistoryActivity extends AppCompatActivity {
 
 
             customer = realm.where(Customer.class).equalTo("id", customerId).findFirst();
+
+            Log.v("aa"," cu"+customerId);
 
             if (customer != null) {
 

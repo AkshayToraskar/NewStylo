@@ -149,8 +149,10 @@ public class AddCustomerActivity extends AppCompatActivity {
                     @Override
                     public void execute(Realm realm) {
 
+                        long custIds = Long.parseLong(String.valueOf(new Date().getTime()));
+
                         if (!update) {
-                            customer = realm.createObject(Customer.class, Long.parseLong(String.valueOf(new Date().getTime())));
+                            customer = realm.createObject(Customer.class, custIds);
                         }
 
                         customer.setFullname(etFirstName.getText().toString());
@@ -159,7 +161,15 @@ public class AddCustomerActivity extends AppCompatActivity {
                         realm.copyToRealmOrUpdate(customer);
 
                         session.setLastUpdateTime(String.valueOf(new Date().getTime()));
+
+
                         finish();
+
+                        Intent i = new Intent(AddCustomerActivity.this, NewSessionActivity.class);
+                        i.putExtra("customerId", custIds);
+                        startActivity(i);
+
+
                     }
                 });
 

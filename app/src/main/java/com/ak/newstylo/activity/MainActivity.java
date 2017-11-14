@@ -156,33 +156,33 @@ public class MainActivity extends AppCompatActivity {
                         customerList.clear();
                         customerList.addAll(realm.where(Customer.class).findAll());
                         Collections.reverse(customerList);
-
                         etSearchPatient.setInputType(InputType.TYPE_CLASS_TEXT);
                         rbSelection = 0;
                         setCustomerAdapter();
                         etSearchPatient.setHint("Search Customer by Name");
+                        etSearchPatient.setText("");
                         break;
 
                     case R.id.rb_mobile:
                         customerList.clear();
                         customerList.addAll(realm.where(Customer.class).findAll());
                         Collections.reverse(customerList);
-
                         etSearchPatient.setInputType(InputType.TYPE_CLASS_PHONE);
                         rbSelection = 1;
                         setCustomerAdapter();
                         etSearchPatient.setHint("Search Customer by Mobile");
+                        etSearchPatient.setText("");
                         break;
 
                     case R.id.rb_billno:
-                        etSearchPatient.setInputType(InputType.TYPE_CLASS_PHONE);
+                        etSearchPatient.setInputType(InputType.TYPE_CLASS_NUMBER);
                         rbSelection = 2;
-
                         sessionList.clear();
                         sessionList.addAll(realm.where(Session.class).findAll());
                         Collections.reverse(sessionList);
                         setSessionAdapter();
                         etSearchPatient.setHint("Search measurment by billno");
+                        etSearchPatient.setText("");
                         break;
 
                 }
@@ -356,6 +356,15 @@ public class MainActivity extends AppCompatActivity {
                 customerList.addAll(realm.where(Customer.class).findAll());
                 Collections.reverse(customerList);
                 setCustomerAdapter();
+
+                if (customerList.size() > 0) {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    llNoData.setVisibility(View.GONE);
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    llNoData.setVisibility(View.VISIBLE);
+                }
+
                 break;
 
             case 2:
@@ -363,20 +372,21 @@ public class MainActivity extends AppCompatActivity {
                 sessionList.addAll(realm.where(Session.class).findAll());
                 Collections.reverse(sessionList);
                 setSessionAdapter();
+
+                if (sessionList.size() > 0) {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    llNoData.setVisibility(View.GONE);
+                } else {
+                    recyclerView.setVisibility(View.GONE);
+                    llNoData.setVisibility(View.VISIBLE);
+                }
+
                 break;
         }
 
 
         //mAdapter.notifyDataSetChanged();
         notifyData();
-
-        if (customerList.size() > 0) {
-            recyclerView.setVisibility(View.VISIBLE);
-            llNoData.setVisibility(View.GONE);
-        } else {
-            recyclerView.setVisibility(View.GONE);
-            llNoData.setVisibility(View.VISIBLE);
-        }
 
 
     }

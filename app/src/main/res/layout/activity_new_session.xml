@@ -1,76 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.NewSessionActivity">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_margin="10dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp">
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.design.widget.TextInputLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+
+        </android.support.v7.widget.Toolbar>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="70dp"
+            android:layout_marginRight="70dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="17dp" />
+
+            <TextView
+                android:id="@+id/tvMobile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="17dp" />
+
+            <TextView
+                android:id="@+id/tvLocality"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:textSize="17dp" />
+
 
             <EditText
                 android:id="@+id/etBillno"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/text_border_selector"
                 android:hint="Bill no"
-                android:inputType="number" />
-        </android.support.design.widget.TextInputLayout>
+                android:inputType="number"
+                android:padding="10dp"
+                android:textSize="20dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/grey_200" />
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/etNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Note" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:textSize="20dp"
+                android:background="@drawable/text_border_selector"
+                android:hint="Note"
+                android:padding="10dp"
+                android:textColor="@color/white"
+                android:textColorHint="@color/grey_200" />
 
-
-
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvImageCollection"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible" />
-
-        <LinearLayout
-            android:id="@+id/llNoData"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:visibility="gone"
-            android:orientation="vertical">
-
-
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:src="@drawable/hanger" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No record found"
-                android:textColor="@color/cardview_dark_background"
-                android:textSize="15sp" />
 
         </LinearLayout>
 
 
-    </LinearLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_new_session" />
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabCapture"
@@ -84,4 +98,4 @@
         android:onClick="onBtnClick"
         app:srcCompat="@drawable/ic_camera_alt_black_24dp" />
 
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

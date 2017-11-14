@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +33,8 @@ public class SessionHistoryAdapter extends RecyclerView.Adapter<SessionHistoryAd
     private List<Session> sessionList;
     private Context context;
 
+    private final static int FADE_DURATION = 1000; // in milliseconds
+
     Realm realm;
     SessionManager sessionManager;
 
@@ -48,6 +52,8 @@ public class SessionHistoryAdapter extends RecyclerView.Adapter<SessionHistoryAd
         public MyViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+
+            //setAnimation(view);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -100,4 +106,14 @@ public class SessionHistoryAdapter extends RecyclerView.Adapter<SessionHistoryAd
         return sessionList.size();
     }
 
+    private void setAnimation(View view) {
+        /*AlphaAnimation anim = new AlphaAnimation(0.0f, 1.0f);
+        anim.setDuration(FADE_DURATION);
+        view.startAnimation(anim);*/
+
+        ScaleAnimation anim = new ScaleAnimation(0.5f, 1.0f, 0.5f, 1.0f, Animation.REVERSE, 0.5f, Animation.REVERSE, 0.5f);
+        anim.setDuration(FADE_DURATION);
+        view.startAnimation(anim);
+
+    }
 }
