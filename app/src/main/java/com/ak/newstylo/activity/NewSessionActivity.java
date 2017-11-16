@@ -82,7 +82,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
     @BindView(R.id.tvLocality)
     TextView tvLocality;
     //  @BindView(R.id.tvDate)
-    TextView tvDate;
+    //TextView tvDate;
     public static SaveCapturedData saveCapturedData;
     Realm realm;
     Validate validate;
