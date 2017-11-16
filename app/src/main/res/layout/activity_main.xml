@@ -82,7 +82,7 @@
                     android:background="@drawable/rb_background"
                     android:button="@null"
                     android:drawablePadding="5dp"
-                    android:drawableTop="@drawable/ic_content_cut_white_24dp"
+                    android:drawableTop="@drawable/ic_receipt_white_24dp"
                     android:gravity="center"
                     android:text="Billno"
                     android:textColor="@color/white"

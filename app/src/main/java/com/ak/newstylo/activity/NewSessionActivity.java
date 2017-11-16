@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -43,11 +44,13 @@ import com.ak.newstylo.model.Session;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,7 +81,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
     TextView tvMobile;
     @BindView(R.id.tvLocality)
     TextView tvLocality;
-    @BindView(R.id.tvDate)
+    //  @BindView(R.id.tvDate)
     TextView tvDate;
     public static SaveCapturedData saveCapturedData;
     Realm realm;
@@ -91,6 +94,7 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
     private RealmList<ImageData> sessionImageList;
     public SessionImageAdapter mAdapter;
     public static int EDITIMAGE = 2;
+    public static int SELECTIMAGE = 1;
     Session session;
     String dateText;
 
@@ -178,7 +182,8 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
                     etNote.setText(session.getNote() + " ");
                 }
 
-                tvDate.setText("Date: " + session.getDate());
+                // tvDate.setText("Date: " + session.getDate());
+                // tvDate.setVisibility(View.GONE);
 
 
             } else {
@@ -363,9 +368,74 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
 
             }
 
+            if (requestCode == SELECTIMAGE) {
+                Log.d("onActivityResult", "uriImagePath Gallary :" + data.getData().toString());
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                final String filepath1=Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator
+                        + "NewStylo" + File.separator + "I" + timeStamp;
+                File f = new File(filepath1);
+                if (!f.exists()) {
+                    try {
+                        f.createNewFile();
+                        copyFile(new File(getPath(data.getData())), f);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        ImageData imgdata = realm.createObject(ImageData.class, new Date().getTime());
+                        imgdata.setSessionId(sessionId);
+                        imgdata.setDate(String.valueOf(new Date()));
+                        imgdata.setPath(filepath1);
+                        realm.copyToRealmOrUpdate(imgdata);
+                    }
+                });
+
+
+                mAdapter.notifyDataSetChanged();
+
+
+            }
+
         }
 
     }
+
+
+    public String getPath(Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        startManagingCursor(cursor);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
+    private void copyFile(File sourceFile, File destFile) throws IOException {
+        if (!sourceFile.exists()) {
+            return;
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+        source = new FileInputStream(sourceFile).getChannel();
+        destination = new FileOutputStream(destFile).getChannel();
+        if (destination != null && source != null) {
+            destination.transferFrom(source, 0, source.size());
+        }
+        if (source != null) {
+            source.close();
+        }
+        if (destination != null) {
+            destination.close();
+        }
+    }
+
 
     public String inputStreamToFile(String uri) {
 
@@ -422,6 +492,12 @@ public class NewSessionActivity extends AppCompatActivity implements SaveCapture
             case R.id.fabCapture:
                 Intent cameraIntent = new Intent(this, CameraActivity.class);
                 startActivity(cameraIntent);
+                break;
+
+            case R.id.fabSelectFile:
+                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                photoPickerIntent.setType("image/*");
+                startActivityForResult(photoPickerIntent, SELECTIMAGE);
                 break;
         }
     }
