@@ -39,8 +39,8 @@ public class SessionHistoryAdapter extends RecyclerView.Adapter<SessionHistoryAd
     SessionManager sessionManager;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tvDate)
-        TextView tvDate;
+        //@BindView(R.id.tvDate)
+        //TextView tvDate;
         @BindView(R.id.tvBillno)
         TextView tvBillno;
         @BindView(R.id.tvNote)
@@ -94,7 +94,7 @@ public class SessionHistoryAdapter extends RecyclerView.Adapter<SessionHistoryAd
         List<ImageData> imgD = realm.where(ImageData.class).equalTo("sessionId", sessionList.get(position).getId()).findAll();
         long totalData = imgD.size();
 
-        holder.tvDate.setText("Date : " + sessionList.get(position).getDate());
+       // holder.tvDate.setText("Date : " + sessionList.get(position).getDate());
         holder.tvBillno.setText("Bill No. : " + String.valueOf(sessionList.get(position).getBillNo() == null ? "-" : sessionList.get(position).getBillNo()));
         holder.tvComment.setText("Note : " + String.valueOf(sessionList.get(position).getNote() == null ? "-" : sessionList.get(position).getNote()));
         holder.tvImgCount.setText("Images : " + totalData);

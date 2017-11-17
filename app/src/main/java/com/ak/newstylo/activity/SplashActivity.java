@@ -27,7 +27,7 @@ import io.realm.Realm;
 
 public class SplashActivity extends AppCompatActivity {
 
-    public static int SPLASH_TIME_OUT = 3000;
+    public static int SPLASH_TIME_OUT = 2000;
     Realm realm;
     Animation animBounce;
     @BindView(R.id.iv_logo)
@@ -49,6 +49,7 @@ public class SplashActivity extends AppCompatActivity {
 
 
         manageOldData();
+        //callhandler();
 
     }
 
