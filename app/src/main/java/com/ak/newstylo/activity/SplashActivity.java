@@ -48,8 +48,8 @@ public class SplashActivity extends AppCompatActivity {
         ivLogo.startAnimation(animBounce);
 
 
-        manageOldData();
-        //callhandler();
+        //manageOldData();
+        callhandler();
 
     }
 
