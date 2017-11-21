@@ -18,6 +18,7 @@ import com.ak.newstylo.model.ImageData;
 import com.ak.newstylo.views.TouchImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,23 +46,19 @@ public class MyViewPagerAdapter extends PagerAdapter {
         layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.image_fullscreen_preview, container, false);
 
-        final TouchImageView imageViewPreview = (TouchImageView) view.findViewById(R.id.image_preview);
+        //final TouchImageView imageViewPreview = (TouchImageView) view.findViewById(R.id.image_preview);
+        final PhotoView imageViewPreview = (PhotoView) view.findViewById(R.id.image_preview);
 
 
         final ImageData image = images.get(position);
 
 
-
-
-            Glide.with(activity)//.load(image.getByteArrayImage())
-                    .load(Uri.fromFile(new File(image.getPath())))
-                    //.thumbnail(0.5f)
-                    //.crossFade()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .into(imageViewPreview);
-
-
-
+        Glide.with(activity)//.load(image.getByteArrayImage())
+                .load(Uri.fromFile(new File(image.getPath())))
+                //.thumbnail(0.5f)
+                //.crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(imageViewPreview);
 
 
         container.addView(view);
