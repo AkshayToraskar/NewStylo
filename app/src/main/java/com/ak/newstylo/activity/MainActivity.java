@@ -679,7 +679,7 @@ public class MainActivity extends AppCompatActivity {
                                         long imageId = Long.parseLong(finalRow[9]);
                                         ImageData imageData = realm.where(ImageData.class).equalTo("id", imageId).findFirst();
                                         if (imageData == null) {
-                                            imageData = realm.createObject(ImageData.class, imageData);
+                                            imageData = realm.createObject(ImageData.class, imageId);
                                         }
                                         imageData.setDate(finalRow[10]);
                                         imageData.setFilename(finalRow[11]);
@@ -704,7 +704,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
 
-            Toast.makeText(getApplicationContext(), "File is not proper format", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "File not found", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             System.err.println(e.getMessage());
             Toast.makeText(getApplicationContext(), "File is not proper format", Toast.LENGTH_SHORT).show();

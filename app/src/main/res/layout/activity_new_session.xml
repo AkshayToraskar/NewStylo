@@ -92,6 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="20dp"
+        app:fabSize="normal"
         android:onClick="onBtnClick"
         android:src="@drawable/ic_camera_alt_black_24dp" />
 
@@ -109,6 +110,7 @@
         android:layout_gravity="end|top"
         app:backgroundTint="@color/text_default_color"
         android:layout_margin="20dp"
+        app:fabSize="normal"
         android:onClick="onBtnClick"
         android:src="@drawable/ic_insert_photo_white_24dp"
         app:layout_anchor="@id/dummy"
