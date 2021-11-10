@@ -11,13 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,6 +25,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ak.newstylo.R;
 import com.ak.newstylo.adapter.SessionImageAdapter;
 import com.ak.newstylo.app.PreviewData;
@@ -40,6 +41,7 @@ import com.ak.newstylo.app.Validate;
 import com.ak.newstylo.model.Customer;
 import com.ak.newstylo.model.ImageData;
 import com.ak.newstylo.model.Session;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;

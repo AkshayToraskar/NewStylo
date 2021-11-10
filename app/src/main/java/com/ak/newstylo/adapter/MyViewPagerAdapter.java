@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.v4.view.PagerAdapter;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +24,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import static android.view.View.GONE;
+
+import androidx.viewpager.widget.PagerAdapter;
 
 /**
  * Created by dg hdghfd on 02-06-2017.

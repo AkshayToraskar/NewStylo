@@ -9,13 +9,12 @@
     tools:showIn="@layout/activity_new_session">
 
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvImageCollection"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/linearLayout"
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp"></android.support.v7.widget.RecyclerView>
+        tools:layout_editor_absoluteY="8dp"></androidx.recyclerview.widget.RecyclerView>
 
 
     <LinearLayout

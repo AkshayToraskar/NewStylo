@@ -17,6 +17,7 @@
         <activity
             android:name=".activity.SplashActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,33 +28,38 @@
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait"
+            android:exported="true"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden"></activity>
 
         <activity
             android:name=".activity.AddCustomerActivity"
+            android:exported="true"
             android:screenOrientation="portrait" />
 
         <activity
             android:name=".activity.CustomerHistoryActivity"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
 
         <activity
             android:name=".activity.NewSessionActivity"
-
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".activity.CameraActivity"
+            android:exported="true"
             android:parentActivityName=".activity.NewSessionActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name=".activity.FilePickerActivityLatest"
+            android:exported="true"
             android:screenOrientation="portrait" />
 
     </application>

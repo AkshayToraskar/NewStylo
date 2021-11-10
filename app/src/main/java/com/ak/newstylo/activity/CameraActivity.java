@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
+
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +24,8 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.ak.newstylo.R;
 import com.ak.newstylo.app.CameraPreview;
